@@ -1,0 +1,13 @@
+[project]
+name = "vl-convert-service"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "vl-convert-python",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "requests",
+]
