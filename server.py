@@ -87,6 +87,19 @@ class Router(BaseHTTPRequestHandler):
             elif path == "/api/vg2pdf":
                 result = vlc.vega_to_pdf(body, scale=scale, allowed_base_urls=ALLOWED_BASE_URLS)
                 self.ok(result, "application/pdf")
+            elif path == "/vegalite":
+                # Compatibility endpoint matching the original vegalite-api interface.
+                # Params: output_format=svg|png (default svg), scale_factor=float (default 1)
+                output_format = qp.get("output_format", "svg")
+                scale_factor = float(qp.get("scale_factor", 1))
+                if output_format == "svg":
+                    result = vlc.vegalite_to_svg(body, vl_version=vl_version, theme=theme, allowed_base_urls=ALLOWED_BASE_URLS)
+                    self.ok(result, "image/svg+xml")
+                elif output_format == "png":
+                    result = vlc.vegalite_to_png(body, vl_version=vl_version, theme=theme, scale=scale_factor, allowed_base_urls=ALLOWED_BASE_URLS)
+                    self.ok(result, "image/png")
+                else:
+                    self.err(f"Invalid output_format '{output_format}'. Use svg or png.")
             else:
                 self.err("Not found", 404)
         except Exception as e:
